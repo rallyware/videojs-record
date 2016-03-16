@@ -342,7 +342,7 @@
                     navigator.webkitGetUserMedia ||
                     navigator.mozGetUserMedia ||
                     navigator.msGetUserMedia);
-                // Some browsers just don't implement it - return a rejected
+                // some browsers just don't implement it - return a rejected
                 // promise with an error to keep a consistent interface
                 if (!getUserMedia)
                 {
@@ -358,13 +358,13 @@
                         errorCallback);
                 });
             };
-            // Older browsers might not implement mediaDevices at all, so we set an
+            // older browsers might not implement mediaDevices at all, so we set an
             // empty object first
             if (navigator.mediaDevices === undefined)
             {
                 navigator.mediaDevices = {};
             }
-            // Some browsers partially implement mediaDevices. We can't just assign
+            // some browsers partially implement mediaDevices. We can't just assign
             // an object with getUserMedia as it would overwrite existing
             // properties. Here, we will just add the getUserMedia property if it's
             // missing.
@@ -1482,7 +1482,7 @@
                 return;
             }
 
-            // List cameras and microphones.
+            // list cameras and microphones
             navigator.mediaDevices.enumerateDevices(this).then(function(devices)
             {
                 self.devices = [];
@@ -1498,6 +1498,39 @@
                 self.player().enumerateErrorCode = err;
                 self.player().trigger('enumerateError');
             });
+        },
+
+        /**
+         * Attach audio output device to the provided media element using the
+         * deviceId.
+         */
+        setSinkId: function(element, sinkId)
+        {
+            var element = player.tech_.el_;
+            console.log(element);
+            if (typeof element.sinkId !== 'undefined')
+            {
+                element.setSinkId(sinkId).then(function()
+                {
+                    console.log('Success, audio output device attached: ' + sinkId + ' to ' +
+                        'element with ' + element.title + ' as source.');
+                }).catch(function(error)
+                {
+                    var errorMessage = error;
+                    if (error.name === 'SecurityError')
+                    {
+                        errorMessage = 'You need to use HTTPS for selecting audio output ' +
+                            'device: ' + error;
+                    }
+                    console.error(errorMessage);
+                    // jump back to first output device in the list as it's the default.
+                    // outputSelector.selectedIndex = 0;
+                });
+            }
+            else
+            {
+                // console.warn('Browser does not support audio output device selection.');
+            }
         },
 
         /**
