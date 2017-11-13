@@ -19,7 +19,6 @@ bower_components
 # Build-related
 *.log
 package-lock.json
-dist/
 dist-test/
 docs/
 es5/
